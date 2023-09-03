@@ -1,11 +1,8 @@
 #!/usr/bin/python3
-import os
+import os, sys, re, time, traceback
 from io import BytesIO
 from pathlib import Path
 import shutil
-import re
-import time
-import traceback
 import tarfile
 
 from hosted import config, node
@@ -51,7 +48,7 @@ def main():
     # wait until the configuration is non-empty.
     # hosted will restart this process when the configuration changes.
     if not config.mqtt_host.strip():
-        print >>sys.stderr, "waiting for a config change"
+        print("waiting for a config change", file=sys.stderr)
         while 1: time.sleep(100000)
 
     mqtt = paho.mqtt.client.Client(config.mqtt_client_id.strip())
@@ -60,7 +57,7 @@ def main():
         mqtt.username_pw_set(config.mqtt_user, config.mqtt_password or None)
 
     mqtt.connect(config.mqtt_host.strip(), int(config.mqtt_port))
-    print >>sys.stderr, "connected"
+    print("mqtt connected", file=sys.stderr)
 
     mqtt.on_message = on_message
     # FIXME: subscribe to all topics
