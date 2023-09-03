@@ -1,0 +1,15 @@
+{
+    "name": "MQTT Color Block",
+    "author": "robbi5 <infobeamer@robbi5.de>",
+    "desc": "Colored block, defined by a mqtt topic",
+    "repository": "https://github.com/verschwoerhaus/info-beamer-mqttcolorblock",
+    "platforms": ["pi/epoch-1", "pi/epoch-2"],
+    "nesting": {
+      "parents": ["scheduled-plugin"],
+      "childs": []
+    },
+    "offline": {
+      "support": "no",
+      "info": "This packages needs to reach the defined mqtt server"
+    }
+}

@@ -1,0 +1,76 @@
+#!/usr/bin/python3
+import os
+from io import BytesIO
+from pathlib import Path
+import shutil
+import re
+import time
+import traceback
+import tarfile
+
+from hosted import config, node
+from requests import Session
+
+config.restart_on_update()
+
+# inspired from https://github.com/chaosdorf/freitagsfoo-infobeamer
+PAHO_URL = "https://github.com/eclipse/paho.mqtt.python/archive/refs/tags/v1.6.1.tar.gz"
+
+def download_and_extract_paho(session):
+    req = session.get(PAHO_URL)
+    req.raise_for_status()
+    with tarfile.open(fileobj=BytesIO(req.content), mode="r:gz") as tar:
+        folder = Path(tar.firstmember.name)
+        tar.extractall()
+    shutil.copytree(folder / "src/paho", "paho")
+    shutil.rmtree(folder)
+
+
+session = Session()
+
+if not os.path.exists("paho"):
+    download_and_extract_paho(session)
+
+import paho.mqtt.client
+
+mqtt = None
+
+def on_message(client, userdata, message):
+    print("Received message '" + str(message.payload) + "' on topic '"
+        + message.topic + "' with QoS " + str(message.qos))
+
+    cleanpath = re.sub(r"[^A-Za-z0-9]", "_", message.topic)
+    color = message.payload
+
+    node.send_raw('root/plugin/colorblock/%s:%s' % (cleanpath, color))
+
+
+def main():
+    config.restart_on_update()
+
+    # wait until the configuration is non-empty.
+    # hosted will restart this process when the configuration changes.
+    if not config.mqtt_host.strip():
+        print >>sys.stderr, "waiting for a config change"
+        while 1: time.sleep(100000)
+
+    mqtt = paho.mqtt.client.Client(config.mqtt_client_id.strip())
+
+    if not config.mqtt_user.strip():
+        mqtt.username_pw_set(config.mqtt_user, config.mqtt_password or None)
+
+    mqtt.connect(config.mqtt_host.strip(), int(config.mqtt_port))
+    print >>sys.stderr, "connected"
+
+    mqtt.on_message = on_message
+    # FIXME: subscribe to all topics
+    mqtt.subscribe('#')
+    mqtt.loop_start()
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except:
+        traceback.print_exc()
+        time.sleep(30)

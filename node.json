@@ -1,0 +1,37 @@
+{
+    "name": "Plugin: MQTT Color Block",
+    "permissions": {
+        "network": "Has to connect to the mqtt server"
+    },
+    "options": [{
+        "title": "MQTT Connection",
+        "type": "section"
+    }, {
+        "title": "MQTT Hostname",
+        "name": "mqtt_host",
+        "type": "string",
+        "placeholder": "mqtt.example.org"
+    }, {
+        "title": "MQTT Port",
+        "name": "mqtt_port",
+        "type": "integer",
+        "default": 1883
+    }, {
+        "title": "MQTT Client ID",
+        "name": "mqtt_client_id",
+        "type": "string",
+        "hint": "If the client id is empty, the device serial is used by default"
+    }, {
+        "title": "MQTT User",
+        "name": "mqtt_user",
+        "type": "string"
+    }, {
+        "title": "MQTT Password",
+        "name": "mqtt_password",
+        "type": "string",
+        "ui_type": "password"
+    }],
+    "deferred": [
+        "tile.lua"
+    ]
+}
