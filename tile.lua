@@ -18,7 +18,7 @@ end
 
 function M.data_trigger(path, data)
     local my_path = "root/plugin/colorblock/" .. clean_topic
-    if path != my_path then
+    if path ~= my_path then
         return
     end
     color = parse_rgb(data)
