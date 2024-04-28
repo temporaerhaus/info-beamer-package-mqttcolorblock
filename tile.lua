@@ -12,7 +12,9 @@ function M.task(starts, ends, tileconfig, x1, y1, x2, y2)
     clean_topic = tileconfig.mqtt_topic:gsub("[^A-Za-z0-9]", "_")
     print("now listening for path", clean_topic)
 
-    return bg:draw(x1, y1, x2, y2)
+    for now in api.frame_between(starts, ends) do
+        bg:draw(x1, y1, x2, y2)
+    end
 end
 
 function M.data_trigger(path, data)
