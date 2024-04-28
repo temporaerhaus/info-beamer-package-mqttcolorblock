@@ -11,6 +11,10 @@ def on_message(client, userdata, message):
     try:
         print "Received message", message.payload, "on topic", message.topic
 
+        if "{" in message.payload:
+            print "skipping this message, contains json"
+            return
+
         cleanpath = re.sub(r"[^A-Za-z0-9]", "_", message.topic)
         color = message.payload
         
