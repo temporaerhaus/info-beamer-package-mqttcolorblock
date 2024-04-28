@@ -3,7 +3,7 @@ local bg = resource.create_colored_texture(0, 0, 0, 1)
 
 local M = {}
 
-function parse_rgb(hex)
+local function parse_rgb(hex)
     hex = hex:gsub("#","")
     return {tonumber("0x"..hex:sub(1,2))/255, tonumber("0x"..hex:sub(3,4))/255, tonumber("0x"..hex:sub(5,6))/255}
 end
