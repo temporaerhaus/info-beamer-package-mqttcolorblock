@@ -4,8 +4,6 @@ from hosted import config, node
 
 import mqtt.client as mqtt
 
-config.restart_on_update()
-
 # inspired from https://github.com/chaosdorf/freitagsfoo-infobeamer
 # based on https://community.info-beamer.com/t/how-to-get-data-from-mqtt/1183/2
 
@@ -29,7 +27,7 @@ def main():
 
     client = mqtt.Client(config.mqtt_client_id.strip())
 
-    if not config.mqtt_user.strip():
+    if config.mqtt_user.strip() != "":
         client.username_pw_set(config.mqtt_user, config.mqtt_password or None)
 
     client.connect(config.mqtt_host.strip(), int(config.mqtt_port))
