@@ -1,5 +1,5 @@
 local clean_topic = ""
-local bg = resource.create_colored_texture(0, 0, 0, 1)
+local color = {0,0,0}
 
 local M = {}
 
@@ -12,9 +12,13 @@ function M.task(starts, ends, tileconfig, x1, y1, x2, y2)
     clean_topic = tileconfig.mqtt_topic:gsub("[^A-Za-z0-9]", "_")
     print("now listening for path", clean_topic)
 
+    local bg = resource.create_colored_texture(color[1], color[2], color[3], 1)
+
     for now in api.frame_between(starts, ends) do
         bg:draw(x1, y1, x2, y2)
     end
+
+    bg:dispose()
 end
 
 function M.data_trigger(path, data)
@@ -23,10 +27,7 @@ function M.data_trigger(path, data)
         return
     end
     print("got color update", data)
-    local color = parse_rgb(data)
-    print("thats color", color)
-    bg:dispose()
-    bg = resource.create_colored_texture(color[1], color[2], color[3], 1)
+    color = parse_rgb(data)
 end
 
 function M.can_show(tileconfig)
