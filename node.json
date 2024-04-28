@@ -30,6 +30,11 @@
         "name": "mqtt_password",
         "type": "string",
         "ui_type": "password"
+    }, {
+        "title": "MQTT Global Subscription Topic",
+        "name": "mqtt_subscription_topic",
+        "type": "string",
+        "placeholder": "#"
     }],
     "deferred": [
         "tile.lua"

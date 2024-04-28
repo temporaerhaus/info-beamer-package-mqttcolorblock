@@ -42,8 +42,7 @@ def main():
     print >>sys.stderr, "mqtt connected"
 
     client.on_message = on_message
-    # FIXME: subscribe to all topics
-    client.subscribe('#')
+    client.subscribe(config.mqtt_subscription_topic or '#')
     client.loop_forever()
 
 
