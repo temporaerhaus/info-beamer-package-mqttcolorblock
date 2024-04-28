@@ -1,5 +1,3 @@
-# shortened and python3-ed
-
 #
 # Part of info-beamer hosted. You can find the latest version
 # of this file at:
@@ -35,9 +33,11 @@
 
 VERSION = "1.9-mini"
 
-import os, re, sys, json, time, traceback
-import errno, socket
-import pyinotify
+import os, re, sys, json, time, traceback, marshal, hashlib
+import errno, socket, select, threading, Queue, ctypes
+import pyinotify, requests
+from functools import wraps
+from collections import namedtuple
 from tempfile import NamedTemporaryFile
 
 types = {}
@@ -301,7 +301,6 @@ class Node(object):
             except:
                 pass
         os.symlink(cached, filename)
-
 
 if __name__ == "__main__":
     print("nothing to do here")

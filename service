@@ -1,9 +1,6 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 import os, sys, re, time, traceback
-from io import BytesIO
-from pathlib import Path
 from hosted import config, node
-from requests import Session
 
 import mqtt.client as mqtt
 
@@ -12,12 +9,8 @@ config.restart_on_update()
 # inspired from https://github.com/chaosdorf/freitagsfoo-infobeamer
 # based on https://community.info-beamer.com/t/how-to-get-data-from-mqtt/1183/2
 
-session = Session()
-
-
 def on_message(client, userdata, message):
-    print("Received message '" + str(message.payload) + "' on topic '"
-        + message.topic + "' with QoS " + str(message.qos))
+    print "Received message", message.payload, "on topic", message.topic
 
     cleanpath = re.sub(r"[^A-Za-z0-9]", "_", message.topic)
     color = message.payload
@@ -31,7 +24,7 @@ def main():
     # wait until the configuration is non-empty.
     # hosted will restart this process when the configuration changes.
     if not config.mqtt_host.strip():
-        print("waiting for a config change", file=sys.stderr)
+        print >>sys.stderr, "waiting for a config change"
         while 1: time.sleep(100000)
 
     client = mqtt.client.Client(config.mqtt_client_id.strip())
@@ -40,7 +33,7 @@ def main():
         client.username_pw_set(config.mqtt_user, config.mqtt_password or None)
 
     client.connect(config.mqtt_host.strip(), int(config.mqtt_port))
-    print("mqtt connected", file=sys.stderr)
+    print >>sys.stderr, "mqtt connected"
 
     client.on_message = on_message
     # FIXME: subscribe to all topics
