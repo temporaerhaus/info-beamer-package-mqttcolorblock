@@ -8,12 +8,16 @@ import mqtt.client as mqtt
 # based on https://community.info-beamer.com/t/how-to-get-data-from-mqtt/1183/2
 
 def on_message(client, userdata, message):
-    print "Received message", message.payload, "on topic", message.topic
+    try:
+        print "Received message", message.payload, "on topic", message.topic
 
-    cleanpath = re.sub(r"[^A-Za-z0-9]", "_", message.topic)
-    color = message.payload
-
-    node.send_raw('root/plugin/colorblock/%s:%s' % (cleanpath, color))
+        cleanpath = re.sub(r"[^A-Za-z0-9]", "_", message.topic)
+        color = message.payload
+        
+        node.send_raw('root/plugin/colorblock/%s:%s' % (cleanpath, color))
+    except:
+        print >>sys.stderr, "failed to parse / send mqtt"
+        traceback.print_exc()
 
 
 def main():
