@@ -13,4 +13,6 @@ First of all you have to install this package. The easiest way is probably to vi
 This module is based on 
 
 * https://github.com/info-beamer/package-python3  
+* https://github.com/eclipse/paho.mqtt.python (folder `mqtt` contains v1.6.1)
 * https://github.com/chaosdorf/freitagsfoo-infobeamer
+* https://community.info-beamer.com/t/how-to-get-data-from-mqtt/1183/2

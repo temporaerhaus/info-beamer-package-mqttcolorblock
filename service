@@ -2,35 +2,18 @@
 import os, sys, re, time, traceback
 from io import BytesIO
 from pathlib import Path
-import shutil
-import tarfile
-
 from hosted import config, node
 from requests import Session
+
+import mqtt.client as mqtt
 
 config.restart_on_update()
 
 # inspired from https://github.com/chaosdorf/freitagsfoo-infobeamer
-PAHO_URL = "https://github.com/eclipse/paho.mqtt.python/archive/refs/tags/v1.6.1.tar.gz"
-
-def download_and_extract_paho(session):
-    req = session.get(PAHO_URL)
-    req.raise_for_status()
-    with tarfile.open(fileobj=BytesIO(req.content), mode="r:gz") as tar:
-        folder = Path(tar.firstmember.name)
-        tar.extractall()
-    shutil.copytree(folder / "src/paho", "paho")
-    shutil.rmtree(folder)
-
+# based on https://community.info-beamer.com/t/how-to-get-data-from-mqtt/1183/2
 
 session = Session()
 
-if not os.path.exists("paho"):
-    download_and_extract_paho(session)
-
-import paho.mqtt.client
-
-mqtt = None
 
 def on_message(client, userdata, message):
     print("Received message '" + str(message.payload) + "' on topic '"
@@ -51,18 +34,18 @@ def main():
         print("waiting for a config change", file=sys.stderr)
         while 1: time.sleep(100000)
 
-    mqtt = paho.mqtt.client.Client(config.mqtt_client_id.strip())
+    client = mqtt.client.Client(config.mqtt_client_id.strip())
 
     if not config.mqtt_user.strip():
-        mqtt.username_pw_set(config.mqtt_user, config.mqtt_password or None)
+        client.username_pw_set(config.mqtt_user, config.mqtt_password or None)
 
-    mqtt.connect(config.mqtt_host.strip(), int(config.mqtt_port))
+    client.connect(config.mqtt_host.strip(), int(config.mqtt_port))
     print("mqtt connected", file=sys.stderr)
 
-    mqtt.on_message = on_message
+    client.on_message = on_message
     # FIXME: subscribe to all topics
-    mqtt.subscribe('#')
-    mqtt.loop_start()
+    client.subscribe('#')
+    client.loop_forever()
 
 
 if __name__ == "__main__":
