@@ -1,3 +1,5 @@
+local api = ...
+
 local clean_topic = ""
 local color = {0,0,0}
 
