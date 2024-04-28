@@ -15,13 +15,6 @@ function M.task(starts, ends, tileconfig, x1, y1, x2, y2)
     return bg:draw(x1, y1, x2, y2)
 end
 
-function M.updated_config_json(config)
-    pp(config)
-
-    local new_clean_topic = config.mqtt_topic:gsub("[^A-Za-z0-9]", "_")
-    print("got config update, listening for path", new_clean_topic)
-end 
-
 function M.data_trigger(path, data)
     if path ~= clean_topic then
         print("ignoring data on path", path)
