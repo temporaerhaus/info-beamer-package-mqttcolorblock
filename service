@@ -27,7 +27,7 @@ def main():
         print >>sys.stderr, "waiting for a config change"
         while 1: time.sleep(100000)
 
-    client = mqtt.client.Client(config.mqtt_client_id.strip())
+    client = mqtt.Client(config.mqtt_client_id.strip())
 
     if not config.mqtt_user.strip():
         client.username_pw_set(config.mqtt_user, config.mqtt_password or None)
